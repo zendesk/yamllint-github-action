@@ -1,3 +1,32 @@
+# Deprecation!
+
+The karancode/yamllint-github-action depends on a `python:3.7-alpine` image from Docker Hub, which would make us run into rate limiting, causing failed builds.
+
+As an alternative, I’ve chosen to manually install Python and Yamllint, which ends up actually being faster than using the yamllint-github-action.
+
+```yaml
+    steps:
+      - uses: zendesk/checkout@v2
+      - uses: zendesk/setup-python@v2
+        with:
+          python-version: '3.7'
+      - name: Install yamllint
+        run: pip install yamllint
+      - name: Yamllint
+        run: yamllint --format colored .
+      - if: ${{ failure() }}
+        run: |
+          cat <<- EOF
+          On Mac, install yamllint with 'brew install yamllint'.
+          Run locally with 'yamllint .'
+          EOF
+          false
+```
+
+This fork is not being synchronized ([closed PR](https://github.com/zendesk/github-action-fork-sync/pull/59)), and will be archived.
+
+---
+
 # yamllint-github-action
 
 Yamllint GitHub Actions allow you to execute `yamllint` command within GitHub Actions.
